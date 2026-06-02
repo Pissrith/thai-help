@@ -12,6 +12,7 @@ function format(n: number) {
 
 export default function Home() {
   const [value, setValue] = useState("");
+  const [sales, setSales] = useState("");
 
   let thai = parseFloat(value);
   if (isNaN(thai) || thai < 0) thai = 0;
@@ -19,6 +20,10 @@ export default function Home() {
 
   const wallet = Math.round(thai * RATIO * 100) / 100;
   const total = Math.round((thai + wallet) * 100) / 100;
+
+  const salesNum = parseFloat(sales);
+  const hasSales = !isNaN(salesNum) && sales.trim() !== "";
+  const extra = Math.round((salesNum - total) * 100) / 100;
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const raw = parseFloat(e.target.value);
@@ -37,6 +42,23 @@ export default function Home() {
         </h1>
         <div className="mb-[22px] text-center text-sm text-[#777]">
           ไทยช่วยไทย + G-wallet
+        </div>
+
+        <div className="mb-[18px]">
+          <label className="mb-2 flex items-center justify-between text-base font-semibold text-[#333]">
+            <span>ยอดขาย</span>
+            <span className="text-xs font-normal text-[#888]">ไม่บังคับ</span>
+          </label>
+          <input
+            type="number"
+            inputMode="decimal"
+            placeholder="0"
+            min={0}
+            step={1}
+            value={sales}
+            onChange={(e) => setSales(e.target.value)}
+            className="w-full rounded-[14px] border-2 border-[#cdebd4] bg-[#f5fdf7] px-[18px] py-[22px] text-right text-4xl font-bold text-[#222] outline-none [appearance:textfield] focus:border-[#2ea36b] focus:bg-white [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          />
         </div>
 
         <div className="mb-[18px]">
@@ -80,6 +102,20 @@ export default function Home() {
           </div>
         </div>
 
+        {hasSales && (
+          <div className="mt-[18px] flex items-center justify-between rounded-[14px] border-2 border-dashed border-[#cdebd4] bg-[#f5fdf7] px-[18px] py-4">
+            <span className="text-[15px] font-semibold text-[#2ea36b]">
+              ยอดจ่ายเพิ่มเติม
+            </span>
+            <span>
+              <span className="text-[28px] font-extrabold text-[#2ea36b]">
+                {format(extra)}
+              </span>
+              <span className="ml-1 text-sm font-medium text-[#2ea36b]">บาท</span>
+            </span>
+          </div>
+        )}
+
         <div className="mt-3.5 rounded-xl bg-[#fff7ec] px-3.5 py-3 text-center text-sm text-[#555]">
           <b className="text-[#b85c00]">{format(thai)}</b> (ไทยช่วยไทย) +{" "}
           <b className="text-[#b85c00]">{format(wallet)}</b> (G-wallet) ={" "}
@@ -88,7 +124,10 @@ export default function Home() {
 
         <button
           type="button"
-          onClick={() => setValue("")}
+          onClick={() => {
+            setValue("");
+            setSales("");
+          }}
           className="mx-auto mt-4 block cursor-pointer px-3 py-1.5 text-sm text-[#b85c00] underline"
         >
           ล้างค่า
